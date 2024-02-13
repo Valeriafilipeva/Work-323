@@ -11,19 +11,19 @@
         $elem = explode (" ", $equation);
         $left = $elem[0];
         $right = $elem[2];
-        $result = $elem[4];
+        $res = $elem[4];
         switch ($elem[1]) {
             case "+":
-                $x = $result - $right;
+                $x = $res - $right;
                 break;
             case "-":
-                $x = $result + $right;
+                $x = $res + $right;
                 break;
             case "*":
-                $x = $result / $right;
+                $x = $res / $right;
                 break;
             case "/":
-                $x = $result * $right;
+                $x = $res * $right;
                 break;
             case "**":
                 $x = log($res, $right);
