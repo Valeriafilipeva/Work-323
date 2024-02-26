@@ -1,0 +1,160 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 4.1</title>
+</head>
+
+<body>
+    <header>
+        <h1>Feedback</h1>
+    </header>
+
+    <main>
+        <div class="container">
+            <form action="https://httpbin.org/post" method="post">
+                <!-- <input type="hidden" name="method" value="delete"> -->
+                <div class="mb-3">
+                    <label for="name">your name</label>
+                    <input type="text" name="name" id="name"> <!--  name - то как в HTTP, id - то как в HTML  -->
+                </div>
+                <div class="mb-3">
+                    <label for="female">your female</label>
+                    <input type="text" name="female" id="female">
+                </div>
+                <div class="mb-3">
+                    <label for="email">your email</label>
+                    <input type="text" name="email" id="email">
+                </div>
+                <div class="mb-3">
+                    <textarea name="desc" id="desc" cols="30" rows="10">
+                        desc
+                    </textarea>
+                </div>
+                <button type="submit">Send</button>
+            </form>
+            <a href="back.php">Переход на 2 страницу</a>
+        </div>
+    </main>
+
+
+</body>
+
+</html>
+ -->
+
+function displayProperties(student) {
+studentProperties=[];
+for (const key in student){
+studentProperties.push(key);
+}
+return studentProperties.join(", ")
+}
+let student = {
+group_name: "231-321",
+last_name: "Фролов",
+first_name: "Михаил"
+};
+console.log(`Список свойств: ${displayProperties(student)}`);
+console.log(`Студент ${student.first_name} ${student.last_name} учиться в группе: ${student.group_name}\n`);
+
+
+console.log("Задание_2");
+function calculateSandwiches(sandwichIngredients) {
+if (sandwichIngredients.bread >= 2 && sandwichIngredients.cheese >=1) {
+sandwichIngredients.bread = Math.floor(sandwichIngredients.bread/2);
+return Math.min(sandwichIngredients.bread, sandwichIngredients.cheese);
+}
+return 0
+}
+let sandwichIngredients = {
+bread: 20,
+cheese: 6
+}
+console.log(`(Bread:${sandwichIngredients.bread} Cheese:${sandwichIngredients.cheese}) => count
+sandwiches:${calculateSandwiches(sandwichIngredients)}\n`);
+
+console.assert(calculateSandwiches({ bread: 1, cheese: 1 }) === 0, "верно_1");
+console.assert(calculateSandwiches({ bread: 0, cheese: 5 }) === 0, "верно_2");
+console.assert(calculateSandwiches({ bread: 55, cheese: 2 }) === 3, "неверно_1");
+console.assert(calculateSandwiches({ bread: 10, cheese: 1 }) === 2, "неверно_2\n");
+
+
+console.log("Задание_3");
+const celsius = 10;
+const fahrenheit = 32;
+function convertTemperature(_temperature, type) {
+if (type === 'Celsius'){
+return 9 / 5 * celsius + 32;
+}
+else if (type === 'fahrenheit') {
+return 5 / 9 * (fahrenheit - 32);
+}
+else{
+return "Неверные данные"
+}
+}
+console.log(`convertTemp(${fahrenheit}, 'toC') -> '${convertTemperature(fahrenheit, 'fahrenheit')} C'`);
+console.log(`convertTemp(${celsius}, 'toF') -> '${convertTemperature(celsius, 'Celsius')} F'\n`);
+
+console.assert(convertTemperature(fahrenheit, 'fahrenheit') === 0, "верно_1");
+console.assert(convertTemperature(celsius, 'Celsius') === 50, "верно_2");
+console.assert(convertTemperature(50, 'Kelvin') === 0, "Неверно_1");
+console.assert(convertTemperature("10", 'Celsius') === 0, "Неверно_2\n");
+
+
+console.log("Задание_4");
+function absValue(number) {
+if (number<0) { number *=-1; return number } return number } let number=-78; console.log(`absValue(${number}) ->
+    ${absValue(number)}\n`);
+
+    console.assert(absValue(5) === 5, "Верно_1");
+    console.assert(absValue(-10) === 10, "Верно_2");
+    console.assert(absValue(4) === -4, "неверно_1");
+    console.assert(absValue("abc") === "-abc", "неверно_2\n");
+
+
+    console.log("Задание_5");
+    const min = -10;
+    const max = 10;
+    function randomNumber(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1) + min);
+    }
+    console.log(`randomNumber(0, 10) -> ${randomNumber(0, max)}`);
+    console.log(`randomNumber(-10, 10) -> ${randomNumber(min,max)}\n`);
+
+    console.assert(randomNumber(-1,2) === 0, "верно_1");
+    console.assert(randomNumber(1,3) === 2, "верно_2");
+    console.assert(randomNumber(-5,100) === 4, "неверно_1");
+    console.assert(randomNumber(-5,100) === 4, "неверно_2");
+    console.log("\n");
+
+
+    console.log("Задание 6");
+    const myArray = [1,2,3,4,5];
+    const numberLength = 20;
+    function randomArray(myArray) {
+    const Array = [];
+    for (let index = 0; index < numberLength; index++) { Array.push(myArray[randomNumber(0, myArray.length - 1)]); }
+        return Array } console.log(`randomNumber ([${myArray}], ${numberLength})=> [${randomArray(myArray)}]\n`);
+
+
+        console.log("Задание_7");
+        let mainArray = ["Var", "awe","viv","eve"];
+        function filter(mainArray, filterFunction) {
+        const array = [];
+        for (const key of mainArray) {
+        if (filterFunction(key)){
+        array.push(key);
+        }
+        }
+        return array;
+        }
+        function isFirstV(key) {
+        return key.startsWith('V') || key.startsWith('v');
+        }
+        console.log(filter(mainArray, isFirstV).length);
