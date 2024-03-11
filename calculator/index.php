@@ -1,91 +1,132 @@
 <?php
-// calculate.php
+session_start();
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $expression = $_POST['expression'];
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $calcStr = $_POST['problem'];
 
-    // Парсинг выражения
-    $tokens = tokenize($expression);
-    $ast = buildAST($tokens);
+    if(!skobkiCheck($calcStr)){
+        echo 'Ошибка в скобках';
+        return false;
+    }
+    //Тригонометрия?
+    if(substr_count($calcStr, 'sin') || substr_count($calcStr, 'cos') || substr_count($calcStr, 'tg') || substr_count($calcStr, 'ctg')){
+        //Получаем название функции и значение
+        $trigArray = explode('(', $calcStr);
+        $trigName = $trigArray[0];//назваение
+        $trigval = str_replace(')','',$trigArray[1]);//значение
 
-    // Вычисление выражения
-    $result = calculateAST($ast);
+        //Катангенс
+        if($trigName == 'ctg'){
+            $tg = trig( 'tan', $trigval);
+            $ctg = 1/$tg;
+            echo $ctg;
+            return;
+        }
+        //Тангенс tg-> tan
+        if($trigName == 'tg'){
+            $trigName = 'tan';
+        }
 
-    // Отправка результата обратно на фронтенд
+        //Вызывем триг функцию
+        echo trig( $trigName, $trigval);
+        return;
+    }
+
+    $calcStr = implode(' ', str_split($calcStr));
+
+    $result = calculator(skobki($calcStr));
+
     echo $result;
 }
 
-function tokenize($expression) {
-    // Разбиение выражения на токены
-    return preg_split('/\s+/', trim($expression));
+function calculator($calcStr) {
+    if (substr_count($calcStr, '+') > 0) {
+        $plus = explode('+', $calcStr);
+        $result = calculator($plus[0]);
+        foreach (array_slice($plus, 1) as $elem) {
+            $result += calculator($elem);
+        }
+
+        return $result;
+    } elseif ((substr_count($calcStr, '-') > 0)) {
+        $minus = explode('-', $calcStr);
+        $result = calculator($minus[0]);
+        foreach (array_slice($minus, 1) as $elem) {
+            $result -= calculator($elem);
+        }
+        return $result;
+    } elseif ((substr_count($calcStr, '*') > 0)) {
+        $multi = explode('*', $calcStr);
+        $result = calculator($multi[0]);
+        foreach (array_slice($multi, 1) as $elem) {
+            $result *= calculator($elem);
+        }
+        return $result;
+    } elseif ((substr_count($calcStr, '/') > 0)) {
+        $division = explode('/', $calcStr);
+        $result = calculator($division[0]);
+        foreach (array_slice($division, 1) as $elem) {
+            $result /= calculator($elem);
+        }
+        return $result;
+    } else {
+        //удаляем пробелы
+        $calcStr= preg_replace( '/\s+/' , '' , $calcStr);
+        //преобразуем строку к числу с плав точкой
+        return (float)$calcStr;
+    }
 }
 
-function buildAST($tokens) {
-    // Построение AST
-    // Здесь должен быть ваш код для преобразования токенов в AST
-    // Этот пример просто возвращает исходные токены
-    return $tokens;
+function skobki($calcStr) {
+    while (substr_count($calcStr, '(') > 0) {
+        $right = strpos($calcStr, ')');
+        $left = strrpos(substr($calcStr, 0, $right), '(');
+        $calcStr= substr_replace($calcStr, calculator(substr($calcStr, $left+1, $right-$left+1)), $left, $right-$left+1);
+    }
+    return $calcStr;
 }
 
-function calculateAST($ast) {
-    // Вычисление выражения по AST
-    // Здесь должен быть ваш код для рекурсивного вычисления выражения
-    // Этот пример просто возвращает строковое представление AST
-    return implode(' ', $ast);
+function skobkiCheck($calcStr)
+{
+    // возвращаем ошибку если пустые скобки ()
+    if(substr_count($calcStr, '()') > 0){
+        return false;
+    }
+    $open = 0; // создаем счетчик открывающихся скобок
+    for ($i = 0; $i < strlen($calcStr); $i++) // перебираем все символы строки
+    {
+        if ($calcStr[$i] == '(') // если встретилась «(»
+            $open++; // увеличиваем счетчик
+        else
+            if ($calcStr[$i] == ')') // если встретилась «)»
+            {
+                $open--; // уменьшаем счетчик
+                if ($open < 0) // если найдена «)» без соответствующей «(»
+                    return false; // возвращаем ошибку
+            }
+    }
+    // если количество открывающихся и закрывающихся скобок разное
+    if ($open !== 0)
+        return false; // возвращаем ошибку
+    return true; // количество скобок совпадает – все ОК
 }
-?>
 
+function trig($name, $val){
 
+    if (!istrig($name))
+        return false;
 
+    $result = $name($val);
 
+    return $result;
+}
 
+function istrig($name)
+{
+    $trignames = array('sin','cos', 'tan');
 
-
-
-
-
-
-
-
-<!-- <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Servernayay</title>
-    <link rel="stylesheet" href="./css/style.css">
-</head>
-
-<body>
-    <header>
-        <img src="./img/Logo_Polytech_rus_main.jpg" alt="Логотип" class="logo">
-        <p class="main_text1">Домашняя работа: Hello, World!</p>
-    </header>
-    <main>
-    <?php
-    echo "Hello? World";
-    ?>
-    </main>
-    <footer>
-        <p>
-        Создать веб-страницу с динамическим контентом. Загрузить код в удаленный репозиторий. Залить на хостинг.
-        
-        Дано:
-        
-        Header = слева логотип МосПолитеха, по центру название работы.
-        
-        Footer = задание для самостоятельно работы (без описания).
-        
-        Main = любой html-элемент с адекватным динамическим контентом (пример Hello, World).
-        
-        Ответ на гугл диск:
-        
-        URL – адрес страницы.
-        
-        Ссылка на репозиторий
- 
-        </p>
-    </footer>
-</body>
-</html> -->
-
+    if(!(in_array($name, $trignames))){
+        return false;
+    }
+    return true;
+}

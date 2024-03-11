@@ -1,38 +1,58 @@
-<!DOCTYPE html>
-<html lang="ru">
+<!doctype html>
+<html class="no-js" lang="">
 
 <head>
-    <meta charset="UTF-8">
-    <title>Калькулятор</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Calculator</title>
+    <link rel="stylesheet" href="css/style.css">
+    <meta name="description" content="">
+    <script  src="https://code.jquery.com/jquery-3.6.3.js"  integrity="sha256-nQLuAZGRRcILA+6dMBOvcRh5Pe310sBpanc6+QBmyVM="  crossorigin="anonymous"></script>
 </head>
 
 <body>
-    <div id="calculator">
-        <input type="text" id="input" readonly>
-        <div id="display">0</div>
-        <div id="buttons">
-            <button onclick="appendNumber(7)">7</button>
-            <button onclick="appendNumber(8)">8</button>
-            <button onclick="appendNumber(9)">9</button>
-            <button onclick="appendOperator('+')">+</button>
-            <button onclick="appendNumber(4)">4</button>
-            <button onclick="appendNumber(5)">5</button>
-            <button onclick="appendNumber(6)">6</button>
-            <button onclick="appendOperator('-')">-</button>
-            <button onclick="appendNumber(1)">1</button>
-            <button onclick="appendNumber(2)">2</button>
-            <button onclick="appendNumber(3)">3</button>
-            <button onclick="appendOperator('*')">*</button>
-            <button onclick="appendNumber(0)">0</button>
-            <button onclick="appendOperator('.')">.</button>
-            <button onclick="appendOperator('/')">/</button>
-            <button onclick="appendOperator('(')">(</button>
-            <button onclick="appendOperator(')')">)</button>
-            <button onclick="clearInput()">C</button>
-            <button onclick="calculate()">=</button>
+<div class="wrapper">
+    <div class="header">
+        <input type="text" id="inputField" readonly placeholder="Введите выражание">
+    </div>
+    <div class="calc">
+        <div class="button-wrapper">
+            <button onclick="clearInput()" class="button-result">AC</button>
+            <button onclick="appendToCalc('(')" class="button-result">(</button>
+            <button onclick="appendToCalc(')')" class="button-result">)</button>
+            <button onclick="setOperator('/')" class="button-operators" id="div">/</button>
+            <button onclick="setOperator('sin')" class="button-operators button-geometric">sin</button>
+        </div>
+        <div class="button-wrapper">
+            <button onclick="appendToCalc('7')" class="button-number">7</button>
+            <button onclick="appendToCalc('8')" class="button-number">8</button>
+            <button onclick="appendToCalc('9')" class="button-number">9</button>
+            <button onclick="setOperator('+')" class="button-operators" id="plus">+</button>
+            <button onclick="setOperator('cos')" class="button-operators button-geometric">cos</button>
+        </div>
+        <div class="button-wrapper">
+            <button onclick="appendToCalc('4')" class="button-number">4</button>
+            <button onclick="appendToCalc('5')" class="button-number">5</button>
+            <button onclick="appendToCalc('6')" class="button-number">6</button>
+            <button onclick="setOperator('-')" class="button-operators" id="minus">-</button>
+            <button onclick="setOperator('tg')" class="button-operators button-geometric">tg</button>
+        </div>
+        <div class="button-wrapper">
+            <button onclick="appendToCalc('1')" class="button-number">1</button>
+            <button onclick="appendToCalc('2')" class="button-number">2</button>
+            <button onclick="appendToCalc('3')" class="button-number">3</button>
+            <button onclick="setOperator('*')" class="button-operators" id="multiply">*</button>
+            <button onclick="setOperator('ctg')" class="button-operators button-geometric">ctg</button>
+        </div>
+        <div class="button-wrapper">
+            <button onclick="appendToCalc('0')" class="button-number button-zero">0</button>
+            <button onclick="appendToCalc('.')" class="button-number">.</button>
+            <button onclick="calculate()" class="button-operators button-zero button-res">=</button>
         </div>
     </div>
-    <script src="calculator.js"></script>
+    <div id="out"></div>
+    <script src="js/app.js"></script>
+</div>
 </body>
 
-</html> 
+</html>
