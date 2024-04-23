@@ -23,19 +23,18 @@ if(isset($_POST['add-post'])){
     $post_description = $_POST['description'];
     $selected_channel = $_POST['channel'];
 
-    // Поиск хэштега
     $hash_pattern = '/#([^\s#]+)/u';
     if (preg_match($hash_pattern, $post_description, $matches)) {
         $hashtag = $matches[1];
     }
     
-    // Запись хэштега в соответствующую таблица
+    
     $sql = "INSERT INTO `hashtags` (`hash_name`) VALUES ('".htmlspecialchars($hashtag)."')";
     mysqli_query($connect, $sql);
 
     $hashtag_id = mysqli_insert_id($connect);
 
-    // Получение id канала
+
     $sql = "SELECT id FROM channels WHERE name = '$selected_channel'";
     $res = mysqli_query($connect, $sql);
 
@@ -44,7 +43,6 @@ if(isset($_POST['add-post'])){
 
     mysqli_free_result($res);
 
-    // Получение fav канала
     $sql = "SELECT fav FROM channels WHERE name = '$selected_channel'";
     $res = mysqli_query($connect, $sql);
 
@@ -53,7 +51,7 @@ if(isset($_POST['add-post'])){
 
     mysqli_free_result($res);
 
-    // Отправление данных в БД
+ 
     $sql = "INSERT INTO `posts`(
         `hash_id`, `channel_id`, `description`, `save`) 
         VALUES (  
@@ -76,7 +74,6 @@ if(isset($_POST['add-field'])) {
 
     $field_id = $connect->insert_id;
 
-    // Получение id хэштегов, которые были отправлены через форму
     $hashtags = $_POST['hashtags'];
 
     $hash_ids = [];
@@ -88,7 +85,7 @@ if(isset($_POST['add-field'])) {
         }
     }
 
-    // Добавление связей в таблицу hash_connect
+
     foreach ($hash_ids as $hash_id) {
         $sql = "INSERT INTO `hash_connect` (`hash_id`, `field_id`) VALUES (
                 '".htmlspecialchars($hash_id)."',
