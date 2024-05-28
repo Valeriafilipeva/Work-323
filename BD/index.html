@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Форма добавления сотрудника</title>
+</head>
+
+<body>
+    <form action="script.php" method="post">
+        <label for="name">Имя:</label><br>
+        <input type="text" id="name" name="name" required><br>
+        <label for="position">Позиция:</label><br>
+        <input type="text" id="position" name="position" required><br>
+        <label for="table">Таблица:</label><br>
+        <select id="table" name="table">
+            <option value="employees">Employees</option>
+            <option value="employees">Departments</option>
+        </select><br>
+        <input type="submit" value="Добавить">
+    </form>
+</body>
+<script src="script.js"></script>
+
+</html>

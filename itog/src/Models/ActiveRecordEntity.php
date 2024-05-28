@@ -1,0 +1,116 @@
+<?php
+
+namespace src\Models;
+
+use Services\Db;
+
+
+abstract class ActiveRecordEntity
+{
+    protected $id;
+
+    public function getId()
+    {
+        return $this->id;
+    }
+    public function __set($name, $value)
+    {
+        $property = $this->underscoreToCamelcase($name);
+        $this->$property = $value;
+    }
+    private function underscoreToCamelcase($name)
+    {
+        return lcfirst(str_replace('_', '', ucwords($name, '_')));
+    }
+    private function formatToDb($key)
+    {
+        //найденной заглавной буквы она заменяет её на ту же букву, но с подчеркиванием перед ней
+        return strtolower(preg_replace('/([A-Z])/', '_$1', $key));//предназначена для преобразования 
+        //строки $key в формат, подходящий для использования в базе данных. Вот как это работает
+    }
+    private function getPropertyToDb(): array
+    {
+        $nameAndValue = [];
+        $reflector = new \ReflectionObject($this);// получаем свойства объекта класса
+        $properties = $reflector->getProperties();
+        foreach ($properties as $property) {
+            $nameProperty = $property->getName();
+            $namePropertyDb = $this->formatToDb($nameProperty);
+            $nameAndValue[$namePropertyDb] = $this->$nameProperty;
+        }
+        return $nameAndValue;
+    }
+    public function save()
+    {
+        $data = $this->getPropertyToDb();
+        if ($this->getId() === null)
+            $this->insert($data);
+        else
+            $this->update($data);
+    }
+    public function insert(array $dataNull)
+    {
+        $db = Db::getInstance();
+        $data = array_filter($dataNull);
+        $fields = [];
+        $paramsToValue = [];
+        $params = [];
+        foreach ($data as $property => $value) {
+            $fields[] = '`' . $property . '`';
+            $param = ':' . $property;
+            $params[] = $param;
+            $paramsToValue[$param] = $value;
+        }
+        $sql = 'INSERT INTO `' . static::getTableName() . '`
+              (' . implode(',', $fields) . ') 
+              VALUES (' . implode(',', $params) . ')';
+        $db->query($sql, $paramsToValue, static::class);
+        return;
+    }
+    public function update(array $data)
+    {
+        $db = Db::getInstance();
+        $params = [];
+        $paramsToValue = [];
+        foreach ($data as $property => $value) {
+            $param = ':' . $property;
+            $params[] = '`' . $property . '`=:' . $property;
+            $paramsToValue[$param] = $value;
+        }
+        $sql = 'UPDATE `' . static::getTableName() . '`
+                SET ' . implode(',', $params) . ' WHERE `id`=:id';
+        $db->query($sql, $paramsToValue, static::class);
+    }
+    public function delete()
+    {
+        $db = Db::getInstance();
+        $sql = 'DELETE FROM `' . static::getTableName() . '` WHERE `id`=:id';
+        // var_dump($sql);
+        $db->query($sql, [':id' => $this->getId()], static::class);
+    }
+    public static function findAll(): array
+    {
+        $db = Db::getInstance();
+        $sql = 'SELECT * FROM `' . static::getTableName() . '`';
+        // var_dump($db);   
+        return $db->query($sql, [], static::class);
+    }
+    public static function getById(int $id): ?self
+    {
+        $db = Db::getInstance();
+        $sql = 'SELECT * FROM `' . static::getTableName() . '` WHERE `id`=' . $id;
+        $entyties = $db->query($sql, [], static::class);
+        return $entyties ? $entyties[0] : null;
+    }
+
+    public static function getByArtId(int $id): ?array
+    {
+        $db = Db::getInstance();
+        $sql = 'SELECT * FROM `' . static::getTableName() . '` WHERE `article_id`=' . $id;
+        $entyties = $db->query($sql, [], static::class);
+
+        return $entyties ? $entyties : null;
+    }
+
+    abstract protected static function getTableName();
+}
